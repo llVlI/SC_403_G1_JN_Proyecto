@@ -1,0 +1,15 @@
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\controllers\AuthController.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\controllers\InventarioController.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\domain\Cliente.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\domain\Inventario.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\domain\Repuesto.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\domain\Rol.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\domain\Usuario.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\repository\ClienteRepository.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\repository\InventarioRepository.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\repository\RepuestoRepository.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\repository\RolRepository.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\repository\UsuarioRepository.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\RepuestosCrApplication.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\service\InventarioService.java
+C:\Users\adria\Downloads\repuestos-cr\src\main\java\com\autopartescr\repuestos\service\UsuarioService.java

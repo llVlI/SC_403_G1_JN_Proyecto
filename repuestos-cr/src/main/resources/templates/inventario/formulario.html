@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"/>
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"/>
+
+<div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+<main class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 mt-4">
+                <div class="card-header bg-dark text-white py-3">
+                    <h4 class="mb-0 fw-bold">
+                        <i class="fas fa-boxes me-2"></i>Actualizar Stock
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/inventario/guardar}" th:object="${inventarioItem}" method="post">
+                        <!-- Campo oculto para el ID, igual que idServicio en el ejercicio de clase -->
+                        <input type="hidden" th:field="*{idInventario}"/>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Repuesto</label>
+                            <input type="text" class="form-control" disabled
+                                   th:value="${inventarioItem.repuesto.nombre}"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Stock minimo (referencia)</label>
+                            <input type="number" class="form-control" disabled
+                                   th:value="${inventarioItem.cantidadMinima}"/>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cantidadActual" class="form-label fw-semibold">Nueva cantidad en stock</label>
+                            <input type="number" id="cantidadActual" th:field="*{cantidadActual}"
+                                   class="form-control" min="0" required/>
+                        </div>
+
+                        <div class="d-flex gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary flex-fill">
+                                <i class="fas fa-save me-2"></i>Guardar
+                            </button>
+                            <a th:href="@{/inventario}" class="btn btn-secondary flex-fill">
+                                <i class="fas fa-arrow-left me-2"></i>Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"/>
+</body>
+</html>

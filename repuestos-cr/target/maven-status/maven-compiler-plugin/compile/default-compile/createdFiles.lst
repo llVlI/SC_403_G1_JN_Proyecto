@@ -1,0 +1,15 @@
+com\autopartescr\repuestos\domain\Cliente.class
+com\autopartescr\repuestos\repository\ClienteRepository.class
+com\autopartescr\repuestos\repository\RolRepository.class
+com\autopartescr\repuestos\service\InventarioService.class
+com\autopartescr\repuestos\repository\UsuarioRepository.class
+com\autopartescr\repuestos\domain\Inventario.class
+com\autopartescr\repuestos\controllers\AuthController.class
+com\autopartescr\repuestos\controllers\InventarioController.class
+com\autopartescr\repuestos\domain\Rol.class
+com\autopartescr\repuestos\domain\Usuario.class
+com\autopartescr\repuestos\domain\Repuesto.class
+com\autopartescr\repuestos\repository\RepuestoRepository.class
+com\autopartescr\repuestos\service\UsuarioService.class
+com\autopartescr\repuestos\repository\InventarioRepository.class
+com\autopartescr\repuestos\RepuestosCrApplication.class

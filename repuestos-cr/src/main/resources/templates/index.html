@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"/>
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"/>
+
+<div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+<main class="container py-5 text-center">
+    <h2 class="fw-bold">AutoPartes CR</h2>
+    <p class="text-muted">
+        Esta pantalla de inicio la reemplazara el catalogo de repuestos (modulo de Eduardo/Santiago).
+        Por ahora sirve para probar el modulo de Usuarios e Inventario de forma independiente.
+    </p>
+    <a th:href="@{/inventario}" class="btn btn-primary">Ver Inventario</a>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"/>
+</body>
+</html>
