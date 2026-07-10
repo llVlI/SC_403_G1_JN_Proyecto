@@ -31,7 +31,8 @@
                         <a class="nav-link" th:href="@{/}"><i class="fas fa-home me-1"></i>Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/inventario}"><i class="fas fa-boxes me-1"></i>Inventario</a>
+                        <a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol.nombre == 'ADMINISTRADOR'}"
+   class="nav-link" th:href="@{/inventario}"><i class="fas fa-boxes me-1"></i>Inventario</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" th:href="@{/repuestos}">
@@ -70,16 +71,12 @@
         </p>
     </div>
 
-    <!-- Los scripts van DENTRO del fragmento footer para que se incluyan
-         en cada pagina que hace th:replace="~{general/fragmentos :: footer}".
-         Si quedaran fuera de esta etiqueta, Thymeleaf nunca los copiaria. -->
+   
     <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
     <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
 </footer>
 
-<!-- Fragmento de notificaciones tipo Toast, mismo patron usado en TiendaTech
-     para mostrar mensajes de exito ("todoOk") o error ("error") despues de
-     una accion (redirect con flash attribute). -->
+<!-
 <section th:fragment="mostrarToast">
     <div aria-live="polite" aria-atomic="true"
          class="position-fixed top-50 start-50 translate-middle" style="z-index: 1080;">
