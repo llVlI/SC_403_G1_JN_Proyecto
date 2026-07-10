@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"/>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"/>
+
+<div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+<main class="container py-5">
+
+    <h2 class="fw-bold mb-4">
+        Gestión de Pedidos
+    </h2>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+        <tr>
+            <th>Pedido</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Cambiar Estado</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="pedido : ${pedidos}">
+
+            <td th:text="${pedido.idPedido}"></td>
+
+            <td th:text="${pedido.cliente.usuario.nombre}"></td>
+
+            <td th:text="${pedido.fecha}"></td>
+
+            <td th:text="${pedido.total}"></td>
+
+            <td>
+                <span class="badge bg-secondary"
+                      th:text="${pedido.estadoPedido.nombre}">
+                </span>
+            </td>
+
+            <td>
+                <select class="form-select form-select-sm">
+                    <option>Pendiente</option>
+                    <option>En proceso</option>
+                    <option>Entregado</option>
+                    <option>Cancelado</option>
+                </select>
+            </td>
+
+        </tr>
+
+        <tr th:if="${#lists.isEmpty(pedidos)}">
+            <td colspan="6" class="text-center">
+                No hay pedidos registrados.
+            </td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"/>
+
+</body>
+</html>

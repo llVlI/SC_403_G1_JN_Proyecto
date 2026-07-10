@@ -79,3 +79,66 @@ VALUES
     (1, 3, 10),   -- stock bajo a proposito, para ver la alerta
     (2, 25, 5),
     (3, 8, 4);
+
+/*==============================================================*/
+/* MÓDULO DE PEDIDOS - ERICK                                    */
+/*==============================================================*/
+
+CREATE TABLE estado_pedido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE pedido (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    fecha DATETIME NOT NULL,
+
+    total DECIMAL(10,2) NOT NULL,
+
+    cliente_id INT NOT NULL,
+
+    estado_pedido_id INT NOT NULL,
+
+    CONSTRAINT fk_pedido_cliente
+        FOREIGN KEY (cliente_id)
+        REFERENCES cliente(id),
+
+    CONSTRAINT fk_pedido_estado
+        FOREIGN KEY (estado_pedido_id)
+        REFERENCES estado_pedido(id)
+);
+
+CREATE TABLE detalle_pedido (
+
+    id INT AUTO_INCREMENT PRIMARY KEY,
+
+    pedido_id INT NOT NULL,
+
+    repuesto_id INT NOT NULL,
+
+    cantidad INT NOT NULL,
+
+    precio_unitario DECIMAL(10,2) NOT NULL,
+
+    subtotal DECIMAL(10,2) NOT NULL,
+
+    CONSTRAINT fk_detalle_pedido
+        FOREIGN KEY (pedido_id)
+        REFERENCES pedido(id),
+
+    CONSTRAINT fk_detalle_repuesto
+        FOREIGN KEY (repuesto_id)
+        REFERENCES repuesto(id)
+);
+
+/*====================*/
+/* ESTADOS INICIALES  */
+/*====================*/
+
+INSERT INTO estado_pedido(nombre)
+VALUES
+('Pendiente'),
+('En proceso'),
+('Entregado'),
+('Cancelado');
