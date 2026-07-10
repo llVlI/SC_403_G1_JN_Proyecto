@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<section class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Administración de Repuestos</h2>
+            <p class="text-muted mb-0">Pantalla 8 - CRUD Repuestos</p>
+        </div>
+
+        <a th:href="@{/repuestos/nuevo}" class="btn btn-warning fw-semibold">
+            <i class="fas fa-plus me-1"></i> Nuevo Repuesto
+        </a>
+    </div>
+
+    <div th:if="${param.guardado}" class="alert alert-success">
+        Repuesto guardado correctamente.
+    </div>
+
+    <div th:if="${param.eliminado}" class="alert alert-success">
+        Repuesto eliminado correctamente.
+    </div>
+
+    <div th:if="${param.error}" class="alert alert-danger">
+        No se encontró el repuesto solicitado.
+    </div>
+
+    <div th:if="${param.marcaGuardada}" class="alert alert-success">
+        Marca guardada correctamente.
+    </div>
+
+    <div th:if="${param.categoriaGuardada}" class="alert alert-success">
+        Categoría guardada correctamente.
+    </div>
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-dark text-white">
+                    <i class="fas fa-car me-1"></i> Crear marca
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/marcas/guardar}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la marca</label>
+                            <input type="text"
+                                   name="nombre"
+                                   class="form-control"
+                                   placeholder="Ejemplo: Toyota"
+                                   required>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark">
+                            Guardar Marca
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-secondary text-white">
+                    <i class="fas fa-tags me-1"></i> Crear categoría
+                </div>
+
+                <div class="card-body">
+                    <form th:action="@{/categorias/guardar}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la categoría</label>
+                            <input type="text"
+                                   name="nombre"
+                                   class="form-control"
+                                   placeholder="Ejemplo: Frenos"
+                                   required>
+                        </div>
+
+                        <button type="submit" class="btn btn-secondary">
+                            Guardar Categoría
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-dark fw-bold">
+            <i class="fas fa-box-open me-1"></i> Catálogo de repuestos
+        </div>
+
+        <div class="card-body table-responsive">
+
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Código</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Categoría</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th class="text-center">Acciones</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="repuesto : ${repuestos}">
+                    <td th:text="${repuesto.idRepuesto}">1</td>
+                    <td th:text="${repuesto.codigo}">REP-001</td>
+                    <td th:text="${repuesto.nombre}">Pastillas de freno</td>
+
+                    <td th:text="${repuesto.marca != null ? repuesto.marca.nombre : 'Sin marca'}">
+                        Toyota
+                    </td>
+
+                    <td th:text="${repuesto.categoria != null ? repuesto.categoria.nombre : 'Sin categoría'}">
+                        Frenos
+                    </td>
+
+                    <td>
+                        ₡<span th:text="${repuesto.precio}">25000</span>
+                    </td>
+
+                    <td th:text="${repuesto.stock}">10</td>
+
+                    <td class="text-center">
+                        <a th:href="@{/repuestos/editar/{id}(id=${repuesto.idRepuesto})}"
+                           class="btn btn-sm btn-primary me-1">
+                            <i class="fas fa-edit"></i>
+                        </a>
+
+                        <a th:href="@{/repuestos/eliminar/{id}(id=${repuesto.idRepuesto})}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('¿Seguro que desea eliminar este repuesto?');">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(repuestos)}">
+                    <td colspan="8" class="text-center text-muted py-4">
+                        No hay repuestos registrados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+</section>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+</body>
+</html>
