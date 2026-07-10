@@ -34,6 +34,11 @@ public class UsuarioService {
     public boolean existeEmail(String email) {
         return usuarioRepository.findByEmail(email).isPresent();
     }
+    
+    @Transactional(readOnly = true)
+public Cliente obtenerClientePorUsuario(Integer idUsuario) {
+    return clienteRepository.findByUsuario_IdUsuario(idUsuario).orElse(null);
+}
 
     // Todo registro publico (HU-09) crea un usuario con rol CLIENTE
     @Transactional
