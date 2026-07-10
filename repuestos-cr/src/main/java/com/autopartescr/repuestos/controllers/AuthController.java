@@ -42,8 +42,15 @@ public class AuthController {
             model.addAttribute("error", messageSource.getMessage("login.error", null, Locale.getDefault()));
             return "auth/login";
         }
-        session.setAttribute(SESSION_USUARIO, usuarioOpt.get());
-        return "redirect:/inventario";
+        Usuario usuarioLogueado = usuarioOpt.get();
+        session.setAttribute(SESSION_USUARIO, usuarioLogueado);
+
+        // Redirige segun el rol: solo el administrador va directo a
+        // inventario, el resto va al inicio.
+        if ("ADMINISTRADOR".equals(usuarioLogueado.getRol().getNombre())) {
+            return "redirect:/inventario";
+        }
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
