@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"/>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"/>
+
+<div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+<main class="container py-5">
+
+    <h2 class="fw-bold mb-4">
+        Mis Pedidos
+    </h2>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+        <tr>
+            <th>Pedido</th>
+            <th>Fecha</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr>
+            <td>#1001</td>
+            <td>09/07/2026</td>
+            <td>₡22 500</td>
+            <td><span class="badge bg-warning text-dark">Pendiente</span></td>
+            <td>
+                <button class="btn btn-danger btn-sm">Cancelar</button>
+            </td>
+        </tr>
+
+        <tr>
+            <td>#1002</td>
+            <td>05/07/2026</td>
+            <td>₡45 000</td>
+            <td><span class="badge bg-success">Entregado</span></td>
+            <td>-</td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"/>
+
+</body>
+</html>

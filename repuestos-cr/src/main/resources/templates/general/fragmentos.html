@@ -34,6 +34,11 @@
                         <a th:if="${session.usuarioLogueado != null and session.usuarioLogueado.rol.nombre == 'ADMINISTRADOR'}"
    class="nav-link" th:href="@{/inventario}"><i class="fas fa-boxes me-1"></i>Inventario</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/repuestos}">
+                            <i class="fas fa-cogs me-1"></i>Repuestos
+                        </a>
+                    </li>
                 </ul>
                 <!-- Si HAY alguien logueado: saludo + Cerrar sesion -->
                 <span th:if="${session.usuarioLogueado != null}" class="text-white-50 small me-3">

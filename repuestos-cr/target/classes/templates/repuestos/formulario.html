@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{general/fragmentos :: head}"></head>
+
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"></header>
+
+<section class="container mt-5">
+
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1"
+            th:text="${repuesto.idRepuesto == null ? 'Nuevo Repuesto' : 'Editar Repuesto'}">
+            Nuevo Repuesto
+        </h2>
+
+        <p class="text-muted mb-0">Pantalla 9 - Formulario de repuesto</p>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning text-dark fw-bold">
+            <i class="fas fa-box me-1"></i> Datos del repuesto
+        </div>
+
+        <div class="card-body">
+
+            <form th:action="@{/repuestos/guardar}" method="post" th:object="${repuesto}">
+
+                <input type="hidden" th:field="*{idRepuesto}">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Nombre</label>
+                        <input type="text"
+                               th:field="*{nombre}"
+                               class="form-control"
+                               placeholder="Ejemplo: Pastillas de freno"
+                               required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Código</label>
+                        <input type="text"
+                               th:field="*{codigo}"
+                               class="form-control"
+                               placeholder="Ejemplo: REP-001"
+                               required>
+                    </div>
+
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label">Descripción</label>
+                        <textarea th:field="*{descripcion}"
+                                  class="form-control"
+                                  rows="3"
+                                  placeholder="Descripción del repuesto"></textarea>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Precio</label>
+                        <input type="number"
+                               th:field="*{precio}"
+                               class="form-control"
+                               min="0"
+                               step="0.01"
+                               placeholder="25000"
+                               required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Stock</label>
+                        <input type="number"
+                               th:field="*{stock}"
+                               class="form-control"
+                               min="0"
+                               placeholder="10"
+                               required>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Marca</label>
+                        <select name="idMarca" class="form-select" required>
+                            <option value="">Seleccione una marca</option>
+
+                            <option th:each="marca : ${marcas}"
+                                    th:value="${marca.idMarca}"
+                                    th:text="${marca.nombre}"
+                                    th:selected="${repuesto.marca != null and repuesto.marca.idMarca == marca.idMarca}">
+                                Toyota
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Categoría</label>
+                        <select name="idCategoria" class="form-select" required>
+                            <option value="">Seleccione una categoría</option>
+
+                            <option th:each="categoria : ${categorias}"
+                                    th:value="${categoria.idCategoria}"
+                                    th:text="${categoria.nombre}"
+                                    th:selected="${repuesto.categoria != null and repuesto.categoria.idCategoria == categoria.idCategoria}">
+                                Frenos
+                            </option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a th:href="@{/repuestos}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Volver
+                    </a>
+
+                    <button type="submit" class="btn btn-warning fw-semibold">
+                        <i class="fas fa-save me-1"></i> Guardar Repuesto
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</section>
+
+<footer th:replace="~{general/fragmentos :: footer}"></footer>
+
+</body>
+</html>
