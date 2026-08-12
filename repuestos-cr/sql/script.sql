@@ -1,7 +1,5 @@
--- =====================================================
--- AutoPartes CR - Script SQL del modulo de Adrian
--- (Usuarios, Roles, Clientes, Inventario)
--- =====================================================
+-- AutoPartes CR 
+-- modulo de Adrian (Usuarios, Roles, Clientes, Inventario)
 
 CREATE DATABASE IF NOT EXISTS autopartes_cr;
 USE autopartes_cr;
@@ -45,25 +43,48 @@ CREATE TABLE IF NOT EXISTS cliente (
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
 );
 
--- =====================================================
--- NOTA IMPORTANTE PARA LA INTEGRACION:
--- La tabla "repuesto" pertenece al modulo de Eduardo
--- (Catalogo de Repuestos). Aqui se crea una version
--- minima SOLO para poder probar este modulo de forma
--- independiente. Al integrar el proyecto completo,
--- se debe usar la tabla "repuesto" real (con mas
--- columnas: descripcion, precio, marca_id, etc.) y
--- eliminar este CREATE TABLE duplicado.
--- =====================================================
-CREATE TABLE IF NOT EXISTS repuesto (
+-- Modulo de Eduardo (Catalogo de Repuestos)
+
+CREATE TABLE IF NOT EXISTS marca (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL
+    nombre VARCHAR(80) NOT NULL UNIQUE
 );
 
-INSERT INTO repuesto (nombre) VALUES
-    ('Pastilla de freno delantera'),
-    ('Filtro de aceite'),
-    ('Bateria 12V 45Ah');
+INSERT INTO marca (nombre) VALUES
+    ('Toyota'),
+    ('Hyundai'),
+    ('Nissan');
+
+CREATE TABLE IF NOT EXISTS categoria (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(80) NOT NULL UNIQUE
+);
+
+INSERT INTO categoria (nombre) VALUES
+    ('Frenos'),
+    ('Motor'),
+    ('Electrico');
+
+CREATE TABLE IF NOT EXISTS repuesto (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    codigo VARCHAR(50) NOT NULL UNIQUE,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
+    marca_id INT NOT NULL,
+    categoria_id INT NOT NULL,
+    FOREIGN KEY (marca_id) REFERENCES marca(id),
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id)
+);
+
+INSERT INTO repuesto (nombre, codigo, descripcion, precio, stock, marca_id, categoria_id) VALUES
+    ('Pastilla de freno delantera', 'PF-001', 'Pastillas de freno delanteras', 18500.00, 3,
+        (SELECT id FROM marca WHERE nombre = 'Toyota'), (SELECT id FROM categoria WHERE nombre = 'Frenos')),
+    ('Filtro de aceite', 'FA-002', 'Filtro de aceite de motor', 6500.00, 25,
+        (SELECT id FROM marca WHERE nombre = 'Hyundai'), (SELECT id FROM categoria WHERE nombre = 'Motor')),
+    ('Bateria 12V 45Ah', 'BAT-003', 'Bateria 12V 45Ah libre de mantenimiento', 65000.00, 8,
+        (SELECT id FROM marca WHERE nombre = 'Nissan'), (SELECT id FROM categoria WHERE nombre = 'Electrico'));
 
 -- Tabla de inventario (HU-07 actualizar stock, HU-08 reporte)
 CREATE TABLE IF NOT EXISTS inventario (
@@ -80,9 +101,7 @@ VALUES
     (2, 25, 5),
     (3, 8, 4);
 
-/*==============================================================*/
-/* MÓDULO DE PEDIDOS - ERICK                                    */
-/*==============================================================*/
+-- Módulo de pedidos - Erick                                   
 
 CREATE TABLE estado_pedido (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -132,13 +151,13 @@ CREATE TABLE detalle_pedido (
         REFERENCES repuesto(id)
 );
 
-/*====================*/
-/* ESTADOS INICIALES  */
-/*====================*/
+
+-- Estados iniciales
 
 INSERT INTO estado_pedido(nombre)
 VALUES
 ('Pendiente'),
 ('En proceso'),
+('Listo para entrega'),
 ('Entregado'),
 ('Cancelado');
