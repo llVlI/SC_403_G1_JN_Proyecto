@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{general/fragmentos :: head}"/>
+<body>
+
+<header th:replace="~{general/fragmentos :: header}"/>
+
+<div th:replace="~{general/fragmentos :: mostrarToast}"></div>
+
+<!-- Pantalla 3 - Catalogo -->
+<div class="bg-light py-4 border-bottom">
+    <div class="container">
+        <h2 class="fw-bold mb-3"><i class="fas fa-th-large text-warning me-2"></i>Catalogo de Repuestos</h2>
+
+        <!-- HU-11 buscar, HU-12 filtrar por marca, HU-13 disponibilidad -->
+        <form th:action="@{/catalogo}" method="get" class="row g-2 align-items-center">
+            <div class="col-12 col-md-5">
+                <input type="text" name="q" th:value="${q}" class="form-control"
+                       placeholder="Buscar por nombre de repuesto..."/>
+            </div>
+            <div class="col-8 col-md-3">
+                <select name="marca" class="form-select">
+                    <option value="">Todas las marcas</option>
+                    <option th:each="m : ${marcas}"
+                            th:value="${m.idMarca}"
+                            th:text="${m.nombre}"
+                            th:selected="${marcaSeleccionada != null and marcaSeleccionada == m.idMarca}">Marca</option>
+                </select>
+            </div>
+            <div class="col-4 col-md-2 form-check ms-1 d-flex align-items-center">
+                <input class="form-check-input me-2" type="checkbox" name="disponibles" value="true"
+                       id="soloDisponibles" th:checked="${soloDisponibles}"/>
+                <label class="form-check-label small" for="soloDisponibles">Solo disponibles</label>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter me-1"></i>Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<main class="container py-4">
+
+    <p class="text-muted" th:if="${#lists.isEmpty(repuestos)}">
+        <i class="fas fa-circle-info me-1"></i>No se encontraron repuestos con los criterios indicados.
+    </p>
+
+    <div class="row g-4">
+        <div class="col-lg-3 col-md-4 col-sm-6" th:each="r : ${repuestos}">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body d-flex flex-column">
+                    <h6 class="fw-bold" th:text="${r.repuesto.nombre}">Nombre del repuesto</h6>
+                    <p class="text-muted small mb-1" th:text="'Codigo: ' + ${r.repuesto.codigo}">Codigo</p>
+                    <p class="text-muted small mb-2">
+                        <span th:text="${r.repuesto.marca != null ? r.repuesto.marca.nombre : 'Sin marca'}">Marca</span>
+                        <span th:if="${r.repuesto.categoria != null}" th:text="' · ' + ${r.repuesto.categoria.nombre}"></span>
+                    </p>
+                    <p class="small text-secondary flex-grow-1"
+                       th:text="${r.repuesto.descripcion ?: 'Sin descripcion disponible.'}">Descripcion</p>
+
+                    <p class="fw-bold text-primary mb-2"
+                       th:text="${r.repuesto.precio != null ? '₡' + r.repuesto.precio : 'Precio no disponible'}">₡0</p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span th:if="${r.disponible}" class="badge bg-success">
+                            <i class="fas fa-check-circle me-1"></i>Disponible
+                        </span>
+                        <span th:unless="${r.disponible}" class="badge bg-secondary">
+                            <i class="fas fa-times-circle me-1"></i>Agotado
+                        </span>
+                    </div>
+
+                    <a th:href="@{/catalogo/{id}(id=${r.repuesto.idRepuesto})}"
+                       class="btn btn-outline-dark btn-sm mt-auto">
+                        <i class="fas fa-eye me-1"></i>Ver detalle
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer th:replace="~{general/fragmentos :: footer}"/>
+</body>
+</html>

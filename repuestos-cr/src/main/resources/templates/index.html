@@ -8,13 +8,69 @@
 
 <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
 
-<main class="container py-5 text-center">
-    <h2 class="fw-bold">AutoPartes CR</h2>
-    <p class="text-muted">
-        Esta pantalla de inicio la reemplazara el catalogo de repuestos (modulo de Eduardo/Santiago).
-        Por ahora sirve para probar el modulo de Usuarios e Inventario de forma independiente.
-    </p>
-    <a th:href="@{/inventario}" class="btn btn-primary">Ver Inventario</a>
+<!-- Pantalla 2 - Inicio -->
+<div class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-2"><i class="fas fa-car-battery text-warning me-2"></i>AutoPartes CR</h2>
+        <p class="text-white-50 mb-4">Encuentra el repuesto que tu vehiculo necesita</p>
+
+        <form th:action="@{/catalogo}" method="get" class="row justify-content-center g-2">
+            <div class="col-10 col-md-6">
+                <input type="text" name="q" class="form-control form-control-lg"
+                       placeholder="Buscar repuesto por nombre..."/>
+            </div>
+            <div class="col-10 col-md-2 d-grid">
+                <button type="submit" class="btn btn-warning btn-lg fw-semibold">
+                    <i class="fas fa-search me-1"></i>Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<main class="container py-5">
+
+    <!-- Acceso rapido por marca (HU-12) -->
+    <section class="mb-5" th:if="${not #lists.isEmpty(marcas)}">
+        <h5 class="fw-bold mb-3">Comprar por marca</h5>
+        <div class="d-flex flex-wrap gap-2">
+            <a th:each="m : ${marcas}"
+               th:href="@{/catalogo(marca=${m.idMarca})}"
+               class="btn btn-outline-dark btn-sm">
+                <i class="fas fa-industry me-1"></i><span th:text="${m.nombre}">Marca</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Repuestos destacados -->
+    <section>
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h5 class="fw-bold mb-0">Repuestos destacados</h5>
+            <a th:href="@{/catalogo}" class="small">Ver catalogo completo <i class="fas fa-arrow-right ms-1"></i></a>
+        </div>
+
+        <div class="row g-4" th:if="${not #lists.isEmpty(destacados)}">
+            <div class="col-md-3 col-sm-6" th:each="d : ${destacados}">
+                <a th:href="@{/catalogo/{id}(id=${d.repuesto.idRepuesto})}" class="text-decoration-none text-dark">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body">
+                            <h6 class="fw-bold" th:text="${d.repuesto.nombre}">Repuesto</h6>
+                            <p class="text-muted small mb-2"
+                               th:text="${d.repuesto.marca != null ? d.repuesto.marca.nombre : 'Sin marca'}">Marca</p>
+                            <p class="fw-bold text-primary mb-2"
+                               th:text="${d.repuesto.precio != null ? '₡' + d.repuesto.precio : 'Precio no disponible'}">₡0</p>
+                            <span th:if="${d.disponible}" class="badge bg-success">Disponible</span>
+                            <span th:unless="${d.disponible}" class="badge bg-secondary">Agotado</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <p th:if="${#lists.isEmpty(destacados)}" class="text-muted">
+            Aun no hay repuestos cargados en el catalogo.
+        </p>
+    </section>
 </main>
 
 <footer th:replace="~{general/fragmentos :: footer}"/>
