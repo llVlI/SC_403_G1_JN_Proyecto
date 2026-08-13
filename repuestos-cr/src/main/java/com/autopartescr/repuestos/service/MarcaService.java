@@ -34,4 +34,21 @@ public class MarcaService {
     public void eliminar(Integer idMarca) {
         marcaRepository.deleteById(idMarca);
     }
+
+    @Transactional(readOnly = true)
+    public boolean existeNombre(String nombre) {
+        return marcaRepository.existsByNombreIgnoreCase(nombre);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existeNombreEnOtraMarca(
+            String nombre,
+            Integer idMarca) {
+
+        return marcaRepository
+                .existsByNombreIgnoreCaseAndIdMarcaNot(
+                        nombre,
+                        idMarca
+                );
+    }
 }

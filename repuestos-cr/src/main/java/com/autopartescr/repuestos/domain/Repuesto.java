@@ -22,37 +22,36 @@ public class Repuesto implements Serializable {
     @Column(name = "id")
     private Integer idRepuesto;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "El nombre del repuesto es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
-    @NotBlank
-    @Size(max = 50)
+    @NotBlank(message = "El código del repuesto es obligatorio")
+    @Size(max = 50, message = "El código no puede superar los 50 caracteres")
     @Column(name = "codigo", nullable = false, unique = true, length = 50)
     private String codigo;
 
-    @Size(max = 255)
+    @Size(max = 255, message = "La descripción no puede superar los 255 caracteres")
     @Column(name = "descripcion", length = 255)
     private String descripcion;
 
-    @NotNull
-    @DecimalMin(value = "0.0", inclusive = true)
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true,
+            message = "El precio no puede ser negativo")
     @Column(name = "precio", nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
-    @NotNull
-    @Min(0)
+    @NotNull(message = "El stock es obligatorio")
+    @Min(value = 0, message = "El stock no puede ser negativo")
     @Column(name = "stock", nullable = false)
-    private Integer stock;
+    private Integer stock = 0;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marca_id", nullable = false)
-    @NotNull
     private Marca marca;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
-    @NotNull
     private Categoria categoria;
 }

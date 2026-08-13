@@ -34,4 +34,21 @@ public class CategoriaService {
     public void eliminar(Integer idCategoria) {
         categoriaRepository.deleteById(idCategoria);
     }
+
+    @Transactional(readOnly = true)
+    public boolean existeNombre(String nombre) {
+        return categoriaRepository.existsByNombreIgnoreCase(nombre);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existeNombreEnOtraCategoria(
+            String nombre,
+            Integer idCategoria) {
+
+        return categoriaRepository
+                .existsByNombreIgnoreCaseAndIdCategoriaNot(
+                        nombre,
+                        idCategoria
+                );
+    }
 }

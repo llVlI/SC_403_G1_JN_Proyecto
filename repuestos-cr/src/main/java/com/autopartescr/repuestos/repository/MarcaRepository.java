@@ -7,4 +7,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MarcaRepository extends JpaRepository<Marca, Integer> {
 
     List<Marca> findAllByOrderByNombreAsc();
+
+    boolean existsByNombreIgnoreCase(String nombre);
+
+    boolean existsByNombreIgnoreCaseAndIdMarcaNot(
+            String nombre,
+            Integer idMarca
+    );
 }
