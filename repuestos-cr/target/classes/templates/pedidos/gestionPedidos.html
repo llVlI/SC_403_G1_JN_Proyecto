@@ -48,11 +48,12 @@
             </td>
 
             <td>
-                <select class="form-select form-select-sm">
-                    <option>Pendiente</option>
-                    <option>En proceso</option>
-                    <option>Entregado</option>
-                    <option>Cancelado</option>
+                <select class="form-select form-select-sm" name="estado">
+                    <option th:selected="${pedido.estadoPedido.nombre == 'Pendiente'}">Pendiente</option>
+                    <option th:selected="${pedido.estadoPedido.nombre == 'En proceso'}">En proceso</option>
+                    <option th:selected="${pedido.estadoPedido.nombre == 'Listo para entrega'}">Listo para entrega</option>
+                    <option th:selected="${pedido.estadoPedido.nombre == 'Entregado'}">Entregado</option>
+                    <option th:selected="${pedido.estadoPedido.nombre == 'Cancelado'}">Cancelado</option>
                 </select>
             </td>
 
