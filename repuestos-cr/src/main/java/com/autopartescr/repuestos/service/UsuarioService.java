@@ -6,7 +6,7 @@ import com.autopartescr.repuestos.domain.Usuario;
 import com.autopartescr.repuestos.repository.ClienteRepository;
 import com.autopartescr.repuestos.repository.RolRepository;
 import com.autopartescr.repuestos.repository.UsuarioRepository;
-import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,31 +16,33 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final ClienteRepository clienteRepository;
     private final RolRepository rolRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
                            ClienteRepository clienteRepository,
-                           RolRepository rolRepository) {
+                           RolRepository rolRepository,
+                           PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
         this.clienteRepository = clienteRepository;
         this.rolRepository = rolRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @Transactional(readOnly = true)
-    public Optional<Usuario> login(String email, String password) {
-        return usuarioRepository.findByEmailAndPassword(email, password);
-    }
+    // El login en si ya no lo maneja este service: Spring Security lo
+    // hace a traves de UsuarioDetailsService y el PasswordEncoder.
 
     @Transactional(readOnly = true)
     public boolean existeEmail(String email) {
         return usuarioRepository.findByEmail(email).isPresent();
     }
-    
-    @Transactional(readOnly = true)
-public Cliente obtenerClientePorUsuario(Integer idUsuario) {
-    return clienteRepository.findByUsuario_IdUsuario(idUsuario).orElse(null);
-}
 
-    // Todo registro publico (HU-09) crea un usuario con rol CLIENTE
+    @Transactional(readOnly = true)
+    public Cliente obtenerClientePorUsuario(Integer idUsuario) {
+        return clienteRepository.findByUsuario_IdUsuario(idUsuario).orElse(null);
+    }
+
+    // Todo registro publico (HU-09) crea un usuario con rol CLIENTE.
+    // La contrasena se guarda con BCrypt, nunca en texto plano.
     @Transactional
     public Cliente registrarCliente(Cliente cliente) {
         Rol rolCliente = rolRepository.findByNombre("CLIENTE")
@@ -49,6 +51,7 @@ public Cliente obtenerClientePorUsuario(Integer idUsuario) {
 
         Usuario usuario = cliente.getUsuario();
         usuario.setRol(rolCliente);
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
         Usuario usuarioGuardado = usuarioRepository.save(usuario);
 
         cliente.setUsuario(usuarioGuardado);

@@ -17,6 +17,13 @@
                 </div>
                 <div class="card-body p-4">
 
+                    <div th:if="${param.error}" class="alert alert-danger py-2">
+                        Correo o contraseña incorrectos.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success py-2">
+                        Sesión cerrada correctamente.
+                    </div>
+
                     <form th:action="@{/login}" th:object="${usuario}" method="post">
                         <div class="mb-3">
                             <label for="email" class="form-label fw-semibold">Correo electronico</label>
