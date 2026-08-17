@@ -44,10 +44,24 @@ CREATE TABLE IF NOT EXISTS usuario (
 );
 
 -- Usuario administrador de prueba (correo: admin@autopartescr.com / clave: admin123)
+-- La contrasena se guarda con BCrypt (hash de "admin123"), requerido por
+-- Spring Security. Nunca se guardan contrasenas en texto plano.
 INSERT INTO usuario (nombre, email, password, rol_id)
-SELECT 'Administrador', 'admin@autopartescr.com', 'admin123',
+SELECT 'Administrador', 'admin@autopartescr.com', '$2a$10$.fJmGN1IiM5zv63H/U428.cXH0VUBe.jhRZ4jEXCXwawvoT1CdO.2',
        (SELECT id FROM rol WHERE nombre = 'ADMINISTRADOR')
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'admin@autopartescr.com');
+
+-- Usuario cliente de prueba (correo: cliente@autopartescr.com / clave: cliente123)
+INSERT INTO usuario (nombre, email, password, rol_id)
+SELECT 'Cliente Demo', 'cliente@autopartescr.com', '$2a$10$A7xVup2l283Hi0qZme0qxupPRnhY0icl3LKNKwi2kZGnvMVrJ8UXK',
+       (SELECT id FROM rol WHERE nombre = 'CLIENTE')
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'cliente@autopartescr.com');
+
+-- Usuario encargado de ventas de prueba (correo: ventas@autopartescr.com / clave: ventas123)
+INSERT INTO usuario (nombre, email, password, rol_id)
+SELECT 'Encargado Ventas', 'ventas@autopartescr.com', '$2a$10$OW2jtuHGLRafG4JRU6P.x.Hrej3UjzL/.pK4wtzQeOYrSDsm.Ev0K',
+       (SELECT id FROM rol WHERE nombre = 'ENCARGADO_VENTAS')
+WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE email = 'ventas@autopartescr.com');
 
 CREATE TABLE IF NOT EXISTS cliente (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -162,3 +176,85 @@ INSERT IGNORE INTO estado_pedido (nombre) VALUES
     ('Listo para entrega'),
     ('Entregado'),
     ('Cancelado');
+
+-- ---------------------------------------------------------
+-- Modulo de seguridad (Spring Security)
+-- ---------------------------------------------------------
+-- Tabla que guarda las rutas protegidas de la aplicacion. En vez de
+-- escribir las reglas de acceso directamente en el codigo Java, se
+-- guardan aqui: SecurityConfig las lee al arrancar la aplicacion.
+--
+-- requiere_rol = 0  -> ruta publica (no necesita login)
+-- requiere_rol = 1  -> ruta protegida (necesita el rol de la columna rol_id)
+--
+-- ADMINISTRADOR hereda automaticamente los permisos de ENCARGADO_VENTAS
+-- (ver roleHierarchy en SecurityConfig), asi que no hace falta duplicar
+-- las rutas de pedidos para ambos roles.
+CREATE TABLE IF NOT EXISTS ruta (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ruta VARCHAR(100) NOT NULL,
+    requiere_rol BOOLEAN NOT NULL DEFAULT FALSE,
+    rol_id INT,
+    FOREIGN KEY (rol_id) REFERENCES rol(id)
+);
+
+-- Rutas publicas: catalogo, login, registro, pagina de inicio.
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/' AS ruta, FALSE AS requiere_rol, NULL AS rol_id) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/catalogo' AS ruta, FALSE, NULL) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/catalogo');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/catalogo/**' AS ruta, FALSE, NULL) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/catalogo/**');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/login' AS ruta, FALSE, NULL) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/login');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/registro' AS ruta, FALSE, NULL) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/registro');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT * FROM (SELECT '/registro/**' AS ruta, FALSE, NULL) AS tmp
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/registro/**');
+
+-- Rutas solo para ADMINISTRADOR: gestion de inventario y catalogo.
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/inventario/**', TRUE, (SELECT id FROM rol WHERE nombre = 'ADMINISTRADOR')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/inventario/**');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/repuestos/**', TRUE, (SELECT id FROM rol WHERE nombre = 'ADMINISTRADOR')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/repuestos/**');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/categorias/**', TRUE, (SELECT id FROM rol WHERE nombre = 'ADMINISTRADOR')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/categorias/**');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/marcas/**', TRUE, (SELECT id FROM rol WHERE nombre = 'ADMINISTRADOR')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/marcas/**');
+
+-- Rutas para ENCARGADO_VENTAS (y ADMINISTRADOR, que hereda el permiso):
+-- gestion de pedidos.
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/pedidos/gestion', TRUE, (SELECT id FROM rol WHERE nombre = 'ENCARGADO_VENTAS')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/pedidos/gestion');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/pedidos/*/estado', TRUE, (SELECT id FROM rol WHERE nombre = 'ENCARGADO_VENTAS')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/pedidos/*/estado');
+
+-- Rutas para CLIENTE: carrito y mis pedidos.
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/pedidos/carrito', TRUE, (SELECT id FROM rol WHERE nombre = 'CLIENTE')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/pedidos/carrito');
+
+INSERT INTO ruta (ruta, requiere_rol, rol_id)
+SELECT '/pedidos/mis-pedidos', TRUE, (SELECT id FROM rol WHERE nombre = 'CLIENTE')
+WHERE NOT EXISTS (SELECT 1 FROM ruta WHERE ruta = '/pedidos/mis-pedidos');

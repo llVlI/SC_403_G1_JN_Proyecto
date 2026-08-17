@@ -3,7 +3,6 @@ package com.autopartescr.repuestos.controllers;
 import com.autopartescr.repuestos.domain.Cliente;
 import com.autopartescr.repuestos.domain.Usuario;
 import com.autopartescr.repuestos.service.UsuarioService;
-import jakarta.servlet.http.HttpSession;
 import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
@@ -11,52 +10,37 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+// El login y el logout ya NO se manejan aqui: los gestiona Spring
+// Security directamente (ver SecurityConfig, ruta /login configurada
+// con formLogin). Este controller solo se encarga del registro publico
+// de clientes nuevos (HU-09).
 @Controller
 public class AuthController {
 
     private final UsuarioService usuarioService;
     private final MessageSource messageSource;
 
-    // Nombre del atributo de sesion donde guardamos al usuario logueado.
-    public static final String SESSION_USUARIO = "usuarioLogueado";
-
     public AuthController(UsuarioService usuarioService, MessageSource messageSource) {
         this.usuarioService = usuarioService;
         this.messageSource = messageSource;
     }
 
-    // ---------- LOGIN (HU-10) ----------
-
+    // La pantalla de login la sirve Spring Security (loginPage("/login")
+    // en SecurityConfig), pero seguimos necesitando este metodo para que
+    // Thymeleaf pueda mostrar la vista auth/login.html cuando el usuario
+    // visita /login o cuando falla el login (?error=true).
     @GetMapping("/login")
     public String mostrarLogin(Model model) {
         model.addAttribute("usuario", new Usuario());
         return "auth/login";
     }
 
-    @PostMapping("/login")
-    public String procesarLogin(@ModelAttribute Usuario usuario,
-                                 HttpSession session,
-                                 Model model) {
-        var usuarioOpt = usuarioService.login(usuario.getEmail(), usuario.getPassword());
-        if (usuarioOpt.isEmpty()) {
-            model.addAttribute("error", messageSource.getMessage("login.error", null, Locale.getDefault()));
-            return "auth/login";
-        }
-        Usuario usuarioLogueado = usuarioOpt.get();
-        session.setAttribute(SESSION_USUARIO, usuarioLogueado);
-
-        // Redirige segun el rol: solo el administrador va directo a
-        // inventario, el resto va al inicio.
-        if ("ADMINISTRADOR".equals(usuarioLogueado.getRol().getNombre())) {
-            return "redirect:/inventario";
-        }
-        return "redirect:/";
-    }
-
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login";
+    // Pagina que se muestra cuando un usuario logueado intenta entrar a
+    // una ruta protegida para la que no tiene el rol necesario
+    // (ver accessDeniedPage en SecurityConfig).
+    @GetMapping("/acceso-denegado")
+    public String mostrarAccesoDenegado() {
+        return "auth/acceso-denegado";
     }
 
     // ---------- REGISTRO (HU-09) ----------
