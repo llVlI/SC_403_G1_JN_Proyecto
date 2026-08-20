@@ -104,9 +104,30 @@ CREATE TABLE IF NOT EXISTS repuesto (
     stock INT NOT NULL DEFAULT 0,
     marca_id INT NOT NULL,
     categoria_id INT NOT NULL,
+    imagen_url VARCHAR(500),
     FOREIGN KEY (marca_id) REFERENCES marca(id),
     FOREIGN KEY (categoria_id) REFERENCES categoria(id)
 );
+
+-- Si la tabla repuesto ya existia de antes (por ejemplo en la BD de un
+-- companero que la creo antes de esta migracion), CREATE TABLE IF NOT
+-- EXISTS no le agrega la columna nueva. Este bloque la agrega solo si
+-- hace falta, sin duplicar ni fallar en instalaciones nuevas.
+SET @columna_existe = (
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'repuesto'
+      AND COLUMN_NAME = 'imagen_url'
+);
+
+SET @sql_alter = IF(@columna_existe = 0,
+    'ALTER TABLE repuesto ADD COLUMN imagen_url VARCHAR(500)',
+    'SELECT 1'
+);
+
+PREPARE stmt FROM @sql_alter;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- codigo es UNIQUE, así que INSERT IGNORE ya previene duplicados aquí
 INSERT IGNORE INTO repuesto (nombre, codigo, descripcion, precio, stock, marca_id, categoria_id) VALUES
