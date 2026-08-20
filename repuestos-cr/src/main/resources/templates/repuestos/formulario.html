@@ -28,6 +28,7 @@
 
             <form th:action="@{/repuestos/guardar}"
                   method="post"
+                  enctype="multipart/form-data"
                   th:object="${repuesto}">
 
                 <input type="hidden" th:field="*{idRepuesto}">
@@ -197,6 +198,28 @@
                             </option>
 
                         </select>
+
+                    </div>
+
+                    <!-- Imagen (Firebase Storage) -->
+                    <div class="col-md-12 mb-3">
+
+                        <label class="form-label">Imagen del repuesto</label>
+
+                        <div th:if="${repuesto.imagenUrl != null}" class="mb-2">
+                            <img th:src="${repuesto.imagenUrl}"
+                                 alt="Imagen actual del repuesto"
+                                 class="img-thumbnail"
+                                 style="max-height: 120px;">
+                            <p class="text-muted small mb-0">Imagen actual. Suba una nueva solo si desea reemplazarla.</p>
+                        </div>
+
+                        <input type="file"
+                               name="imagen"
+                               class="form-control"
+                               accept="image/jpeg,image/png,image/webp">
+
+                        <small class="text-muted">Formatos permitidos: JPG, PNG, WEBP. Máximo 5 MB.</small>
 
                     </div>
 

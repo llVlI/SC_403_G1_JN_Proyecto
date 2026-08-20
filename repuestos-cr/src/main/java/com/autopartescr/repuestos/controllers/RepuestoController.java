@@ -4,9 +4,11 @@ import com.autopartescr.repuestos.domain.Categoria;
 import com.autopartescr.repuestos.domain.Marca;
 import com.autopartescr.repuestos.domain.Repuesto;
 import com.autopartescr.repuestos.service.CategoriaService;
+import com.autopartescr.repuestos.service.ImagenService;
 import com.autopartescr.repuestos.service.MarcaService;
 import com.autopartescr.repuestos.service.RepuestoService;
 import jakarta.validation.Valid;
+import java.io.IOException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 public class RepuestoController {
@@ -21,15 +24,18 @@ public class RepuestoController {
     private final RepuestoService repuestoService;
     private final MarcaService marcaService;
     private final CategoriaService categoriaService;
+    private final ImagenService imagenService;
 
     public RepuestoController(
             RepuestoService repuestoService,
             MarcaService marcaService,
-            CategoriaService categoriaService) {
+            CategoriaService categoriaService,
+            ImagenService imagenService) {
 
         this.repuestoService = repuestoService;
         this.marcaService = marcaService;
         this.categoriaService = categoriaService;
+        this.imagenService = imagenService;
     }
 
     @GetMapping("/repuestos")
@@ -74,6 +80,8 @@ public class RepuestoController {
             Integer idMarca,
             @RequestParam(value = "idCategoria", required = false)
             Integer idCategoria,
+            @RequestParam(value = "imagen", required = false)
+            MultipartFile imagen,
             Model model) {
 
         /*
@@ -190,6 +198,35 @@ public class RepuestoController {
          */
         repuesto.setMarca(marca);
         repuesto.setCategoria(categoria);
+
+        /*
+         * Subir imagen a Firebase Storage (si el admin adjunto una).
+         * Si es una edicion y no se adjunta imagen nueva, se conserva
+         * la que ya tenia el repuesto.
+         */
+        if (imagen != null && !imagen.isEmpty()) {
+            try {
+                String urlImagen = imagenService.subirImagenRepuesto(imagen);
+                repuesto.setImagenUrl(urlImagen);
+            } catch (IOException e) {
+                resultado.reject("imagen.error", e.getMessage());
+
+                if (marca != null) {
+                    repuesto.setMarca(marca);
+                }
+                if (categoria != null) {
+                    repuesto.setCategoria(categoria);
+                }
+
+                cargarListas(model);
+                return "repuestos/formulario";
+            }
+        } else if (repuesto.getIdRepuesto() != null) {
+            Repuesto existente = repuestoService.buscarPorId(repuesto.getIdRepuesto());
+            if (existente != null) {
+                repuesto.setImagenUrl(existente.getImagenUrl());
+            }
+        }
 
         /*
          * Guardar

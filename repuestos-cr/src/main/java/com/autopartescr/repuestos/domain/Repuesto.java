@@ -54,4 +54,10 @@ public class Repuesto implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
+
+    // URL publica de la imagen del repuesto en Firebase Storage.
+    // Puede ser null: no todos los repuestos tienen imagen todavia.
+    @Size(max = 500, message = "La URL de la imagen no puede superar los 500 caracteres")
+    @Column(name = "imagen_url", length = 500)
+    private String imagenUrl;
 }
