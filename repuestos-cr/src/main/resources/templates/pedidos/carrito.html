@@ -13,61 +13,174 @@
 <main class="container py-5">
 
     <h2 class="fw-bold mb-4">
+        <i class="fas fa-shopping-cart me-2"></i>
         Carrito de Compras
     </h2>
 
-    <table class="table table-bordered table-hover">
+    <!-- CARRITO VACÍO -->
+    <div th:if="${#lists.isEmpty(carrito)}"
+         class="alert alert-info text-center">
 
-        <thead class="table-dark">
-        <tr>
-            <th>Repuesto</th>
-            <th>Marca</th>
-            <th>Precio</th>
-            <th>Cantidad</th>
-            <th>Subtotal</th>
-            <th>Acción</th>
-        </tr>
-        </thead>
+        <h5 class="fw-bold">El carrito está vacío</h5>
 
-        <tbody>
+        <p class="mb-3">
+            Todavía no has agregado repuestos.
+        </p>
 
-        <tr>
-            <td>Filtro de Aceite</td>
-            <td>Toyota</td>
-            <td>₡5 000</td>
-            <td>2</td>
-            <td>₡10 000</td>
-            <td>
-                <button class="btn btn-danger btn-sm">
-                    Eliminar
-                </button>
-            </td>
-        </tr>
+        <a th:href="@{/catalogo}"
+           class="btn btn-primary">
+            Ir al catálogo
+        </a>
 
-        <tr>
-            <td>Pastillas de Freno</td>
-            <td>Honda</td>
-            <td>₡12 500</td>
-            <td>1</td>
-            <td>₡12 500</td>
-            <td>
-                <button class="btn btn-danger btn-sm">
-                    Eliminar
-                </button>
-            </td>
-        </tr>
+    </div>
 
-        </tbody>
+    <!-- CARRITO CON PRODUCTOS -->
+    <div th:if="${!#lists.isEmpty(carrito)}">
 
-    </table>
+        <div class="table-responsive">
 
-    <div class="text-end">
+            <table class="table table-bordered table-hover align-middle">
 
-        <h4>Total: ₡22 500</h4>
+                <thead class="table-dark">
+                <tr>
+                    <th>Repuesto</th>
+                    <th>Marca</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
 
-        <button class="btn btn-success">
-            Confirmar Pedido
-        </button>
+                <tbody>
+
+                <tr th:each="item : ${carrito}">
+
+                    <td th:text="${item.nombre}">
+                        Repuesto
+                    </td>
+
+                    <td th:text="${item.marca}">
+                        Marca
+                    </td>
+
+                    <td th:text="|₡${item.precio}|">
+                        ₡0
+                    </td>
+
+                    <td th:text="${item.stock}">
+                        0
+                    </td>
+
+                    <td>
+                        <form th:action="@{/pedidos/carrito/actualizar}"
+                              method="post"
+                              class="d-flex gap-2">
+
+                            <input type="hidden"
+                                   name="idRepuesto"
+                                   th:value="${item.idRepuesto}"/>
+
+                            <input type="number"
+                                   name="cantidad"
+                                   class="form-control form-control-sm"
+                                   style="width: 80px;"
+                                   min="1"
+                                   th:max="${item.stock}"
+                                   th:value="${item.cantidad}"
+                                   required/>
+
+                            <button type="submit"
+                                    class="btn btn-primary btn-sm">
+                                Actualizar
+                            </button>
+
+                        </form>
+                    </td>
+
+                    <td th:text="|₡${item.subtotal}|">
+                        ₡0
+                    </td>
+
+                    <td>
+                        <form th:action="@{/pedidos/carrito/eliminar/{id}(id=${item.idRepuesto})}"
+                              method="post">
+
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm">
+
+                                <i class="fas fa-trash me-1"></i>
+                                Eliminar
+
+                            </button>
+
+                        </form>
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="card shadow-sm mt-4">
+
+            <div class="card-body">
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-6">
+
+                        <p class="mb-1">
+                            Total de artículos:
+                            <strong th:text="${cantidadArticulos}">
+                                0
+                            </strong>
+                        </p>
+
+                        <a th:href="@{/catalogo}"
+                           class="btn btn-secondary mt-2">
+
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Seguir comprando
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+
+                        <h3 class="fw-bold">
+                            Total:
+                            <span class="text-success"
+                                  th:text="|₡${total}|">
+                                ₡0
+                            </span>
+                        </h3>
+
+                        <form th:action="@{/pedidos/confirmar}"
+      method="post"
+      class="d-inline">
+
+    <button type="submit"
+            class="btn btn-success">
+
+        <i class="fas fa-check me-1"></i>
+        Confirmar Pedido
+
+    </button>
+
+</form>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 

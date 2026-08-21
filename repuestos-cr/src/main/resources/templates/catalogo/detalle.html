@@ -1,88 +1,234 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="~{general/fragmentos :: head}"/>
+
 <body>
 
 <header th:replace="~{general/fragmentos :: header}"/>
 
 <div th:replace="~{general/fragmentos :: mostrarToast}"></div>
 
-<!-- Pantalla 4 - Detalle Repuesto (HU-14) -->
 <main class="container py-5">
+
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a th:href="@{/}">Inicio</a></li>
-            <li class="breadcrumb-item"><a th:href="@{/catalogo}">Catalogo</a></li>
-            <li class="breadcrumb-item active" th:text="${item.repuesto.nombre}">Repuesto</li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/}">Inicio</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a th:href="@{/catalogo}">Catálogo</a>
+            </li>
+            <li class="breadcrumb-item active"
+                th:text="${item.repuesto.nombre}">
+                Repuesto
+            </li>
         </ol>
     </nav>
 
     <div class="row justify-content-center">
+
         <div class="col-md-8">
+
             <div class="card shadow border-0">
-                <div class="card-header bg-dark text-white py-3 d-flex justify-content-between align-items-center">
-                    <h4 class="mb-0 fw-bold" th:text="${item.repuesto.nombre}">Nombre del repuesto</h4>
-                    <span th:if="${item.disponible}" class="badge bg-success fs-6">
-                        <i class="fas fa-check-circle me-1"></i>Disponible
+
+                <div class="card-header bg-dark text-white py-3
+                            d-flex justify-content-between align-items-center">
+
+                    <h4 class="mb-0 fw-bold"
+                        th:text="${item.repuesto.nombre}">
+                        Nombre del repuesto
+                    </h4>
+
+                    <span th:if="${item.disponible}"
+                          class="badge bg-success fs-6">
+
+                        <i class="fas fa-check-circle me-1"></i>
+                        Disponible
+
                     </span>
-                    <span th:unless="${item.disponible}" class="badge bg-secondary fs-6">
-                        <i class="fas fa-times-circle me-1"></i>Agotado
+
+                    <span th:unless="${item.disponible}"
+                          class="badge bg-secondary fs-6">
+
+                        <i class="fas fa-times-circle me-1"></i>
+                        Agotado
+
                     </span>
+
                 </div>
+
                 <img th:if="${item.repuesto.imagenUrl != null}"
                      th:src="${item.repuesto.imagenUrl}"
                      class="card-img-top"
-                     style="max-height: 320px; object-fit: contain; background-color: #f8f9fa;"
+                     style="max-height: 320px;
+                            object-fit: contain;
+                            background-color: #f8f9fa;"
                      alt="Imagen del repuesto">
+
                 <div th:unless="${item.repuesto.imagenUrl != null}"
-                     class="d-flex align-items-center justify-content-center bg-light"
+                     class="d-flex align-items-center
+                            justify-content-center bg-light"
                      style="height: 200px;">
+
                     <i class="fas fa-image fa-3x text-muted"></i>
+
                 </div>
+
                 <div class="card-body p-4">
-                    <p class="text-muted mb-1">Codigo</p>
-                    <p class="fw-semibold mb-3" th:text="${item.repuesto.codigo}">Codigo</p>
+
+                    <p class="text-muted mb-1">Código</p>
+
+                    <p class="fw-semibold mb-3"
+                       th:text="${item.repuesto.codigo}">
+                        Código
+                    </p>
 
                     <div class="row mb-3">
+
                         <div class="col-6">
+
                             <p class="text-muted mb-1">Marca</p>
+
                             <p class="fw-semibold mb-0"
-                               th:text="${item.repuesto.marca != null ? item.repuesto.marca.nombre : 'Sin marca registrada'}">Marca</p>
+                               th:text="${item.repuesto.marca != null
+                               ? item.repuesto.marca.nombre
+                               : 'Sin marca registrada'}">
+                                Marca
+                            </p>
+
                         </div>
+
                         <div class="col-6">
-                            <p class="text-muted mb-1">Categoria</p>
+
+                            <p class="text-muted mb-1">Categoría</p>
+
                             <p class="fw-semibold mb-0"
-                               th:text="${item.repuesto.categoria != null ? item.repuesto.categoria.nombre : 'Sin categoria'}">Categoria</p>
+                               th:text="${item.repuesto.categoria != null
+                               ? item.repuesto.categoria.nombre
+                               : 'Sin categoría'}">
+                                Categoría
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <p class="text-muted mb-1">Descripcion</p>
-                    <p class="mb-3" th:text="${item.repuesto.descripcion ?: 'Este repuesto no tiene descripcion registrada.'}">
-                        Descripcion del repuesto
+                    <p class="text-muted mb-1">Descripción</p>
+
+                    <p class="mb-3"
+                       th:text="${item.repuesto.descripcion
+                       ?: 'Este repuesto no tiene descripción registrada.'}">
+                        Descripción del repuesto
                     </p>
 
                     <div class="row">
+
                         <div class="col-6">
+
                             <p class="text-muted mb-1">Precio</p>
+
                             <p class="fw-bold fs-4 text-primary"
-                               th:text="${item.repuesto.precio != null ? '₡' + item.repuesto.precio : 'No disponible'}">₡0</p>
+                               th:text="${item.repuesto.precio != null
+                               ? '₡' + item.repuesto.precio
+                               : 'No disponible'}">
+                                ₡0
+                            </p>
+
                         </div>
+
                         <div class="col-6">
+
                             <p class="text-muted mb-1">Existencias</p>
-                            <p class="fw-bold fs-4" th:text="${item.stockActual} + ' unidades'">0 unidades</p>
+
+                            <p class="fw-bold fs-4"
+                               th:text="${item.stockActual} + ' unidades'">
+                                0 unidades
+                            </p>
+
                         </div>
+
                     </div>
 
-                    <a th:href="@{/catalogo}" class="btn btn-secondary mt-3">
-                        <i class="fas fa-arrow-left me-2"></i>Volver al catalogo
+                    <!-- AGREGAR AL CARRITO -->
+                    <form th:if="${item.disponible}"
+                          th:action="@{/pedidos/carrito/agregar}"
+                          method="post"
+                          class="mt-4">
+
+                        <input type="hidden"
+                               name="idRepuesto"
+                               th:value="${item.repuesto.idRepuesto}">
+
+                        <div class="row align-items-end">
+
+                            <div class="col-md-4">
+
+                                <label class="form-label fw-semibold">
+                                    Cantidad
+                                </label>
+
+                                <input type="number"
+                                       name="cantidad"
+                                       class="form-control"
+                                       value="1"
+                                       min="1"
+                                       th:max="${item.stockActual}"
+                                       required>
+
+                            </div>
+
+                            <div class="col-md-8">
+
+                                <button type="submit"
+                                        class="btn btn-success">
+
+                                    <i class="fas fa-cart-plus me-2"></i>
+                                    Agregar al carrito
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                    <div th:unless="${item.disponible}"
+                         class="alert alert-warning mt-4">
+
+                        Este repuesto no tiene existencias disponibles.
+
+                    </div>
+
+                    <a th:href="@{/catalogo}"
+                       class="btn btn-secondary mt-3">
+
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Volver al catálogo
+
                     </a>
+
+                    <a th:href="@{/pedidos/carrito}"
+                       class="btn btn-primary mt-3 ms-2">
+
+                        <i class="fas fa-shopping-cart me-2"></i>
+                        Ver carrito
+
+                    </a>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
 </main>
 
 <footer th:replace="~{general/fragmentos :: footer}"/>
+
 </body>
 </html>

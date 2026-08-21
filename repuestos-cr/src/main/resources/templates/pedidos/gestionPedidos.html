@@ -13,61 +13,149 @@
 <main class="container py-5">
 
     <h2 class="fw-bold mb-4">
+        <i class="fas fa-boxes me-2"></i>
         Gestión de Pedidos
     </h2>
 
-    <table class="table table-bordered table-hover">
+    <div th:if="${#lists.isEmpty(pedidos)}"
+         class="alert alert-info text-center">
 
-        <thead class="table-dark">
-        <tr>
-            <th>Pedido</th>
-            <th>Cliente</th>
-            <th>Fecha</th>
-            <th>Total</th>
-            <th>Estado</th>
-            <th>Cambiar Estado</th>
-        </tr>
-        </thead>
+        <h5 class="fw-bold">No hay pedidos registrados</h5>
 
-        <tbody>
+        <p class="mb-0">
+            Cuando los clientes realicen pedidos aparecerán aquí.
+        </p>
 
-        <tr th:each="pedido : ${pedidos}">
+    </div>
 
-            <td th:text="${pedido.idPedido}"></td>
+    <div th:if="${!#lists.isEmpty(pedidos)}"
+         class="table-responsive">
 
-            <td th:text="${pedido.cliente.usuario.nombre}"></td>
+        <table class="table table-bordered table-hover align-middle">
 
-            <td th:text="${pedido.fecha}"></td>
+            <thead class="table-dark">
+            <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Estado Actual</th>
+                <th>Cambiar Estado</th>
+            </tr>
+            </thead>
 
-            <td th:text="${pedido.total}"></td>
+            <tbody>
 
-            <td>
-                <span class="badge bg-secondary"
-                      th:text="${pedido.estadoPedido.nombre}">
-                </span>
-            </td>
+            <tr th:each="pedido : ${pedidos}">
 
-            <td>
-                <select class="form-select form-select-sm" name="estado">
-                    <option th:selected="${pedido.estadoPedido.nombre == 'Pendiente'}">Pendiente</option>
-                    <option th:selected="${pedido.estadoPedido.nombre == 'En proceso'}">En proceso</option>
-                    <option th:selected="${pedido.estadoPedido.nombre == 'Listo para entrega'}">Listo para entrega</option>
-                    <option th:selected="${pedido.estadoPedido.nombre == 'Entregado'}">Entregado</option>
-                    <option th:selected="${pedido.estadoPedido.nombre == 'Cancelado'}">Cancelado</option>
-                </select>
-            </td>
+                <td th:text="|#${pedido.idPedido}|">
+                    #1
+                </td>
 
-        </tr>
+                <td th:text="${pedido.cliente.usuario.nombre}">
+                    Cliente
+                </td>
 
-        <tr th:if="${#lists.isEmpty(pedidos)}">
-            <td colspan="6" class="text-center">
-                No hay pedidos registrados.
-            </td>
-        </tr>
+                <td th:text="${#temporals.format(
+                        pedido.fecha,
+                        'dd/MM/yyyy HH:mm')}">
+                    20/08/2026 21:00
+                </td>
 
-        </tbody>
+                <td th:text="|₡${pedido.total}|">
+                    ₡0
+                </td>
 
-    </table>
+                <td>
+
+                    <span class="badge bg-warning text-dark"
+                          th:if="${pedido.estadoPedido.nombre == 'Pendiente'}"
+                          th:text="${pedido.estadoPedido.nombre}">
+                        Pendiente
+                    </span>
+
+                    <span class="badge bg-primary"
+                          th:if="${pedido.estadoPedido.nombre == 'En proceso'}"
+                          th:text="${pedido.estadoPedido.nombre}">
+                        En proceso
+                    </span>
+
+                    <span class="badge bg-info text-dark"
+                          th:if="${pedido.estadoPedido.nombre == 'Listo para entrega'}"
+                          th:text="${pedido.estadoPedido.nombre}">
+                        Listo para entrega
+                    </span>
+
+                    <span class="badge bg-success"
+                          th:if="${pedido.estadoPedido.nombre == 'Entregado'}"
+                          th:text="${pedido.estadoPedido.nombre}">
+                        Entregado
+                    </span>
+
+                    <span class="badge bg-danger"
+                          th:if="${pedido.estadoPedido.nombre == 'Cancelado'}"
+                          th:text="${pedido.estadoPedido.nombre}">
+                        Cancelado
+                    </span>
+
+                </td>
+
+                <td>
+
+                    <form th:action="@{/pedidos/{id}/estado(id=${pedido.idPedido})}"
+                          method="post"
+                          class="d-flex gap-2">
+
+                        <select class="form-select form-select-sm"
+                                name="estado"
+                                required>
+
+                            <option value="Pendiente"
+                                    th:selected="${pedido.estadoPedido.nombre == 'Pendiente'}">
+                                Pendiente
+                            </option>
+
+                            <option value="En proceso"
+                                    th:selected="${pedido.estadoPedido.nombre == 'En proceso'}">
+                                En proceso
+                            </option>
+
+                            <option value="Listo para entrega"
+                                    th:selected="${pedido.estadoPedido.nombre == 'Listo para entrega'}">
+                                Listo para entrega
+                            </option>
+
+                            <option value="Entregado"
+                                    th:selected="${pedido.estadoPedido.nombre == 'Entregado'}">
+                                Entregado
+                            </option>
+
+                            <option value="Cancelado"
+                                    th:selected="${pedido.estadoPedido.nombre == 'Cancelado'}">
+                                Cancelado
+                            </option>
+
+                        </select>
+
+                        <button type="submit"
+                                class="btn btn-primary btn-sm">
+
+                            <i class="fas fa-save me-1"></i>
+                            Actualizar
+
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
 
 </main>
 
